@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo List</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <!-- versi development, berisi peringatan yang sangat membantu -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body style="background-color:rgb(221, 221, 221);">
+    <section class="p-5">
+        <div id="app">
+            <todo></todo>
+        </div>
+    </section>
+
+</body>
+
+<script>
+    Vue.component('todo', {
+            template: `
+            <div class="container">
+                <h1 class="text-center text-uppercase font-italic">ToDo List</h1>
+                <div class="form-group">
+                    <input class="form-control" type="text" v-model="baru" placeholder="add task "
+                    @keyup.enter="tambah">
+                </div>
+                <table class="table">
+                    <tr v-for='(t, index) in tugas'>
+                        <td>
+                            <button class="btn btn-outline-success" 
+                            @click='selesai(index, t.status)'
+                            :value='t.cek'> {{t.status}}
+                            </button>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control"
+                            :disabled='t.dis' :value="t.kegiatan" 
+                            v-model="t.kegiatan"/> 
+                        </td>
+                        <td>
+                            <button class="btn btn-outline-warning"
+                            @click='edit(index, t.dis)'>
+                                Edit
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-outline-danger"
+                            @click='hapus(index)'>Delete</button>
+                        </td>
+                    </tr>
+                </table>
+                <div class='row'>
+                    <div class="col-6">
+                        <button class="btn btn-block btn-danger"
+                        @click="hapusselesai" >Delete Checked</button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-block btn-danger"
+                        @click="hapussemua">Delete All</button>
+                    </div>
+                </dvi>
+            </div>
+        `,
+            data() {
+                return {
+                    baru: '',
+                    tugas: [{
+                        kegiatan: 'Membuat ToDo List',
+                        cek: false,
+                        status: 'Unchecked',
+                        dis: true
+                    }],
+                    garis: [],
+                    baru: ''
+                }
+            },
+            methods: {
+                tambah() {
+                    if (this.baru == '') {
+                        alert('silahkan isi terlebih dahulu')
+                    } else {
+                        this.tugas.push({
+                            kegiatan: this.baru,
+                            cek: false,
+                            status: 'Unchecked',
+                            dis: true
+                        })
+                    }
+                    this.baru = ''
+                },
+                selesai(index, nilai) {
+                    if (nilai == 'Unchecked') {
+                        this.tugas[index].cek = true,
+                            this.garis[index] = 'V',
+                            this.tugas[index].status = 'Checked'
+                    } else {
+                        this.tugas[index].cek = false,
+                            this.garis[index] = 'X',
+                            this.tugas[index].status = 'Unchecked'
+                    }
+                },
+                edit(index, val) {
+                    if (val == true) {
+                        this.tugas[index].dis = false
+                    } else {
+                        this.tugas[index].dis = true
+                    }
+                },
+                hapus(index) {
+                    Vue.delete(this.tugas, index)
+                },
+                hapusselesai() {
+                    for (i = this.tugas.length - 1; i >= 0; i--) {
+                        if (this.tugas[i].status === 'Checked') {
+                            Vue.delete(this.tugas, i)
+                        }
+                    }
+                },
+                hapussemua() {
+                    this.tugas = []
+                }
+            },
+        }),
+        new Vue({
+            el: '#app',
+
+        })
+</script>
+
+</html>
